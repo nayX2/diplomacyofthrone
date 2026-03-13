@@ -1,6 +1,6 @@
 import random
 import sqlite3
-con = sqlite3.connect("map.db")
+con = sqlite3.connect("mapi.db")
 cur = con.cursor()
 
 def testadj(pro:str,direction:str)->bool:
@@ -8,94 +8,74 @@ def testadj(pro:str,direction:str)->bool:
     print(req)
     return cur.execute(req).fetchone()
 
+
+
+class Rules():
+    def __init__(self , lssoldat):
+        self.lssoldat = lssoldat
     
-class Region():
-    def __init__(self, nom, arsenal, faction, mer, soldat):
-        self.nom = nom
-        self.arsenal = arsenal
-        self.faction = faction
-        self.mer = mer
-        self.soldat = soldat
-
+    def toursolve(self):
+        #ajouter la mobilisation ...
+        for soldat in lssoldat:
+            if soldat.action[0] = "att":
+                soldat.att(soldat.action[1], lssoldat)
+            elif soldat.action[0] = "soutatt":
+                soldat.soutatt(soldat.action[1], lssoldat)
+            elif soldat.action[0] = "soutdef":
+                soldat.soutdef(soldat.action[1], lssoldat)
+            elif soldat.action[0] = "hold":
+                soldat.hold(soldat.action[1])
+        ##voirlesdeplacenment
+        # parcour la liste et bouge les armee vaincu
+        # deplace les armee victorieurse
+        # sauvegare les position dans la bd
+        # change les arsenaux conqui
+        #dessine la carte
         
-
+        
+        
 class Soldat():
-    def __init__(self , region: Region , faction, lssoldat , action):
+    def __init__(self , faction , region):
         for sol in lssoldat:
             if sol.region == region:
                 reglibre = False
                 
-        if reglibre :    
+        if reglibre : 
             self.faction = faction
             self.region = region
-            self.action = []
-            lssoldat.append((faction, region ))
-    
-    def move(self, region):
-        if testadj(self.region, region.nom):
-            if region.soldat == None:
-                #region.addsoldat(self)
-                #self.region.removesoldat
-                #
-                #self.region = region.nom
-                self.action.append(("push",region.soldat))
-                
-                
-            elif region.soldat.faction == self.faction :
-                return None
+            self.nbatt = 0
+            self.nbdef = 0
+            self.action = ("hold", region)
             
-            else :
-                region.soldat.action.append(("attaqué",self))
-                self.action.append(("push",region.soldat))
-                
-    def defend(self):
-        if testadj(self.region, region.nom):
-            if region.soldat.faction == self.faction :
-                self.action.append(("defend",self.region))
-
-    def soutient(self, region):
-        if testadj(self.region, region.nom):
-            if region.soldat.faction == self.faction :
-                
-                region.soldat.action.append(("defendu",self))
-                self.action.append(("soutient",region))
-
+    def att(self,region, lssoldat):
+        if testadj(self.region, region):
+            self.action = ("att", region)
+            for sol in lssoldat:
+                if sol.region = region:
+                    sol.nbatt += 1
+                    sol.action = ("hold" , sol.region)
     
-
-
-def attaquecollision(lssoldat):
-    for soldat in lssoldat:
-        sousattaque = False
-        for action , _ in soldat.action:
-            if action == "attaqué":
-                sousattaque = True
-        if sousattaque:
-            for action , region in soldat.action:
-                if action == "push" :
-                    region.soldat.action.remove(( "attaqué" , soldat.region))
-                elif action == "defend":
-                    region.soldat.action.remove(( "defendu" , soldat.region))
-            
-            soldat.action = [("defend",soldat)]
-    return lssoldat
-
-def attaqueaction(lssoldat):
-    pass
-
+    def soutatt(self, region, lssoldat):
+        if testadj(self.region, region):
+            self.action = ("soutatt", region)
+            for sol in lssoldat:
+                if sol.region = region:
+                    sol.nbatt += 1
+                    sol.action = ("hold" , sol.region)
+                    
+    def soutdef(self, region, lssoldat):
+        if testadj(self.region, region):
+            self.action = ("soutdef", region)
+            for sol in lssoldat:
+                if sol.region = region:
+                    sol.nbdef += 1
     
-def resolution(lssoldat):
-    random.shuffle(lssoldat)
+    def hold(self, region):
+        if self.region == region:
+            self.nbdef +=1
     
-    attaquecollision(lssoldat)
-    
-    attaqueaction(lssoldat)
-    
-    
-    
+        
+        
+        
 
-
-
-
-
-
-
+        
