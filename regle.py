@@ -1,5 +1,6 @@
 import random
 import sqlite3
+import time
 con = sqlite3.connect("mapi.db")
 cur = con.cursor()
 
@@ -108,33 +109,37 @@ class Soldat():
     def hold(self):
         self.action = ("hold", self.region)
         self.nbdef +=1
+    
 
-lssoldat = []
-s1 = Soldat("stark","Field1")
-lssoldat.append(s1)
-s2 = Soldat("stark","Field2")
-lssoldat.append(s2)
-s5 = Soldat("lannister","Field5")
-lssoldat.append(s5)
-
-
-s1.att("Field5",lssoldat)
-#s2.soutatt("Field5",lssoldat)
-s2.hold()
-s5.att("Field2",lssoldat)
-game = Rules(lssoldat)
-
-for sol in lssoldat:
-    print(sol.faction , "|" ,sol.region , "|" ,sol.action, "|" ,sol.nbatt , sol.nbdef)
-print("################################")
+while True : 
+    lssoldat = []
+    s1 = Soldat("stark","Field1")
+    lssoldat.append(s1)
+    s2 = Soldat("stark","Field2")
+    lssoldat.append(s2)
+    s5 = Soldat("lannister","Field5")
+    lssoldat.append(s5)
 
 
-game.toursolve()
+
+    s1.att("Field5",lssoldat)
+    #s2.soutatt("Field5",lssoldat)
+    s2.hold()
+    s5.att("Field2",lssoldat)
+    game = Rules(lssoldat)
+
+    for sol in lssoldat:
+        print(sol.faction , "|" ,sol.region , "|" ,sol.action, "|" ,sol.nbatt , sol.nbdef)
+    print("################################")
 
 
-for sol in lssoldat:
-    print(sol.faction , "|" ,sol.region , "|" ,sol.action, "|" ,sol.nbatt , sol.nbdef)
-print("################################")
+    game.toursolve()
 
+
+    for sol in lssoldat:
+        print(sol.faction , "|" ,sol.region , "|" ,sol.action, "|" ,sol.nbatt , sol.nbdef)
+    print("################################")
+    
+    time.sleep(30)
 
         
