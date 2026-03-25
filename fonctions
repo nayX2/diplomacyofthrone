@@ -1,0 +1,67 @@
+def apparition(arsenal:str, region: str) -> str:
+    req = "UPDATE position SET arsenal = ? WHERE nom = ? ;"
+    #cur.execute("UPDATE position SET arsenal= ["+ arsenal +"] WHERE nom=["+ region +"];")
+    cur.execute(req,(arsenal, region))
+    con.commit()
+    
+def coor(region: str):
+    cor = "SELECT coor_arsenal FROM position WHERE nom = ?;"
+    res = cur.execute(cor,(region,)).fetchone()
+    clean = res[0].strip("()")
+    return tuple(int(v.strip()) for v in clean.split(","))
+
+def duplicate(carte: str):
+    base = Image.open(carte)
+    dup = base.copy()
+    dup.save("copy.png")
+    
+def affichage(faction: str, region, famille, carte: str):
+    # Open the base image
+    result_img = Image.open(carte)
+    
+    if famille == 'Stark' and faction == 'arsenal':
+        overlay_img = Image.open("Stark.png")
+        overlay_img = overlay_img.resize((100, 130))
+        
+    elif famille == 'Targaryen' and faction == 'arsenal':
+        overlay_img = Image.open("Targaryen.png")
+        overlay_img = overlay_img.resize((100, 100))
+        
+    elif famille == 'Greyjoy' and faction == 'arsenal':
+        overlay_img = Image.open("Greyjoy.png")
+        overlay_img = overlay_img.resize((100, 100))
+        
+    elif famille == 'Tyrell' and faction == 'arsenal':
+        overlay_img = Image.open("Tyrell.png")
+        overlay_img = overlay_img.resize((100, 100))
+        
+    elif famille == 'Martell' and faction == 'arsenal':
+        overlay_img = Image.open("Martell.png")
+        overlay_img = overlay_img.resize((100, 130))
+        
+    elif famille == 'Lannister' and faction == 'arsenal':
+        overlay_img = Image.open("Lannister.png")
+        overlay_img = overlay_img.resize((100, 100))
+        
+    elif famille == 'Baratheon' and faction == 'arsenal':
+        overlay_img = Image.open("Baratheon.png")
+        overlay_img = overlay_img.resize((100, 130))
+
+        
+    overlay_img = overlay_img.convert("RGBA")
+    position = coor(region)
+    
+    result_img.paste(overlay_img, position, overlay_img)
+    
+    result_img = result_img.convert("RGBA")
+    
+    result_img.save(carte)        
+        
+        
+        
+
+def creation_carte(carte: str):
+    list = cur.execute("SELECT nom, arsenal FROM position WHERE arsenal IS NOT NULL").fetchall()
+    for x, y in list:
+       affichage('arsenal', x, y, carte)
+
