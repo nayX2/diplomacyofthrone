@@ -1,6 +1,11 @@
 import random
 import sqlite3
 import time
+import fonctions
+from PIL import Image
+
+
+
 con = sqlite3.connect("mapi.db")
 cur = con.cursor()
 
@@ -110,7 +115,7 @@ class Soldat():
         self.action = ("hold", self.region)
         self.nbdef +=1
     
-
+fonctions.duplicate("diplo.jpg")
 while True : 
     lssoldat = []
     s1 = Soldat("stark","Field1")
