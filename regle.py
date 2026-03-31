@@ -25,6 +25,42 @@ class Rules():
     def __init__(self , lssoldat):
         self.lssoldat = lssoldat
     
+    def tourload(self):
+        print("################################")
+        lsfamille = [
+            "stark",
+            "lannister",
+            "greyjoy",
+            "targaryen",
+            "tyrell",
+            "martell",
+            "baratheon"         
+            ]
+        for famille in lsfamille:
+            req= "SELECT "+ famille +" FROM ordre;"
+            ordre = cur.execute(req).fetchall()[0][0]
+            print( ordre)
+            if not(ordre == None):
+                lsordre = ordre.split("§")
+                for inst in lsordre:
+                    lsmot = inst.split()
+                    print(lsmot)
+                    for soldat in  self.lssoldat:
+                        if soldat.region == lsmot[0]:
+                            if lsmot[1] == "att":
+                                soldat.att(lsmot[2], self.lssoldat)
+                                print("attTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+                            elif lsmot[1] == "soutatt":
+                                soldat.soutatt(lsmot[2], self.lssoldat)
+                            elif lsmot[1] == "soutdef":
+                                soldat.soutdef(lsmot[2], self.lssoldat)
+                            elif lsmot[1] == "hold":
+                                soldat.hold()
+                    
+        
+        print("################################")
+        
+        
     def toursolve(self):
         #ajouter la mobilisation ...
         for soldat in lssoldat:
@@ -124,20 +160,15 @@ while True :
     lssoldat.append(s2)
     s5 = Soldat("lannister","Field5")
     lssoldat.append(s5)
-
-
-
-    s1.att("Field5",lssoldat)
-    #s2.soutatt("Field5",lssoldat)
-    s2.hold()
-    s5.att("Field2",lssoldat)
+    
+    
     game = Rules(lssoldat)
 
     for sol in lssoldat:
         print(sol.faction , "|" ,sol.region , "|" ,sol.action, "|" ,sol.nbatt , sol.nbdef)
     print("################################")
 
-
+    game.tourload()
     game.toursolve()
 
 
@@ -145,6 +176,6 @@ while True :
         print(sol.faction , "|" ,sol.region , "|" ,sol.action, "|" ,sol.nbatt , sol.nbdef)
     print("################################")
     
-    time.sleep(30)
+    time.sleep(100)
 
         
