@@ -6,6 +6,55 @@ from PIL import Image
 
 
 
+import pygame
+import sys
+
+pygame.init()
+
+WIDTH, HEIGHT = 600, 600
+ROWS, COLS = 3, 3
+CELL_SIZE = WIDTH // COLS
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Black & White Grid")
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+def draw_grid():
+    for row in range(ROWS):
+        for col in range(COLS):
+            rect = pygame.Rect(
+                col * CELL_SIZE,
+                row * CELL_SIZE,
+                CELL_SIZE,
+                CELL_SIZE
+            )
+            pygame.draw.rect(screen, BLACK, rect, 1)  # just border
+
+clock = pygame.time.Clock()
+
+def draw_soldat(Soldat):
+    if Soldat.faction == "stark":
+        couleur = (0, 0, 0)
+    elif Soldat.faction == "lannister":
+        couleur = (255, 255, 0)
+    case = {
+        "Field1" : (100 , 100),
+        "Field2" : (300 , 100),
+        "Field3" : (500 , 100),
+        "Field4" : (100 , 300),
+        "Field5" : (300 , 300),
+        "Field6" : (500 , 300),
+        "Field7" : (100 , 500),
+        "Field8" : (300 , 500),
+        "Field9" : (500 , 500)
+        }
+
+    pygame.draw.circle(screen, couleur, case[Soldat.region], 50)
+
+
+
 con = sqlite3.connect("mapi.db")
 cur = con.cursor()
 
@@ -96,11 +145,15 @@ class Rules():
                         attaque = False
                 if attaque :
                     soldat.region = soldat.action[1]
+                    print("chatttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
         for soldat in lssoldat:
             soldat.hold()
             soldat.nbdef = 0
             soldat.nbatt = 0
-            
+        
+    def draw(self):
+        for soldat in self.lssoldat:
+            draw_soldat(soldat)
         # sauvegare les position dans la bd
         # change les arsenaux conqui
         #dessine la carte
@@ -151,15 +204,17 @@ class Soldat():
         self.action = ("hold", self.region)
         self.nbdef +=1
     
-fonctions.duplicate("diplo.jpg")
-while True : 
-    lssoldat = []
-    s1 = Soldat("stark","Field1")
-    lssoldat.append(s1)
-    s2 = Soldat("stark","Field2")
-    lssoldat.append(s2)
-    s5 = Soldat("lannister","Field5")
+#fonctions.duplicate("diplo.jpg")
+lssoldat = []
+s1 = Soldat("stark","Field1")
+lssoldat.append(s1)
+s2 = Soldat("stark","Field2")
+lssoldat.append(s2)
+s5 = Soldat("lannister","Field5")
     lssoldat.append(s5)
+    
+while True : 
+    
     
     
     game = Rules(lssoldat)
@@ -170,12 +225,50 @@ while True :
 
     game.tourload()
     game.toursolve()
-
+    
 
     for sol in lssoldat:
         print(sol.faction , "|" ,sol.region , "|" ,sol.action, "|" ,sol.nbatt , sol.nbdef)
     print("################################")
     
-    time.sleep(100)
+    
+    screen.fill(WHITE)
+    draw_grid()
+    game.draw()
+    pygame.display.flip()
+    
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.WINDOWFOCUSLOST:
+            focused = False
+        elif event.type == pygame.WINDOWFOCUSGAINED:
+            focused = True
+    
+    
+    
+    for _ in range(30):
+        time.sleep(1)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.WINDOWFOCUSLOST:
+                focused = False
+            elif event.type == pygame.WINDOWFOCUSGAINED:
+                focused = True
+
+        if focused:
+            clock.tick(60)
+            screen.fill(WHITE)
+            draw_grid()
+            game.draw()
+            pygame.display.flip()
+        else:
+            clock.tick(10)  # slow down when unfocused
+            screen.fill(WHITE)
+            draw_grid()
+            game.draw()
+            pygame.display.flip()
 
         
