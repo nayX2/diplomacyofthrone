@@ -75,10 +75,10 @@ result_img = result_img.convert("RGBA")
 # Save the final image
 result_img.save("final_image.png")
 """
-def apparition(arsenal:str, region: str) -> str:
-    req = "UPDATE position SET arsenal = ? WHERE nom = ? ;"
-    #cur.execute("UPDATE position SET arsenal= ["+ arsenal +"] WHERE nom=["+ region +"];")
-    cur.execute(req,(arsenal, region))
+def apparition(famille:str, region: str) -> str:
+    req = "UPDATE position SET famille = ? WHERE nom = ? ;"
+    #cur.execute("UPDATE position SET famille= ["+ famille +"] WHERE nom=["+ region +"];")
+    cur.execute(req,(famille, region))
     con.commit()
     
 def coor(region: str):
@@ -114,6 +114,6 @@ def affichage(region, famille, carte: str):
         
 
 def creation_carte(carte: str):
-    list = cur.execute("SELECT nom, arsenal FROM position WHERE arsenal IS NOT NULL").fetchall()
+    list = cur.execute("SELECT nom, famille FROM position WHERE famille IS NOT NULL").fetchall()
     for x, y in list:
        affichage(x, y, carte)
