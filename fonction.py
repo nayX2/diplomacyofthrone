@@ -77,7 +77,6 @@ result_img.save("final_image.png")
 """
 def apparition(famille:str, region: str) -> str:
     req = "UPDATE position SET famille = ? WHERE nom = ? ;"
-    #cur.execute("UPDATE position SET famille= ["+ famille +"] WHERE nom=["+ region +"];")
     cur.execute(req,(famille, region))
     con.commit()
     
