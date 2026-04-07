@@ -211,7 +211,7 @@ lssoldat.append(s1)
 s2 = Soldat("stark","Field2")
 lssoldat.append(s2)
 s5 = Soldat("lannister","Field5")
-    lssoldat.append(s5)
+lssoldat.append(s5)
     
 while True : 
     
