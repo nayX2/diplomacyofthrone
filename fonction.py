@@ -1,7 +1,7 @@
 from PIL import Image
 import sqlite3
 
-con = sqlite3.connect("/home/tutu/Bureau/jeux test image/mapi.db")
+con = sqlite3.connect("/home/tutu/Bureau/jeux test image/mapofficiel.db")
 cur = con.cursor()
 """
 # Open the base image
@@ -80,8 +80,8 @@ def apparition(famille:str, region: str) -> str:
     cur.execute(req,(famille, region))
     con.commit()
     
-def coor(region: str):
-    cor = "SELECT coor_arsenal FROM position WHERE nom = ?;"
+def coor(region: str, faction):
+    cor = "SELECT coor_"+faction+" FROM position WHERE nom = ?;"
     res = cur.execute(cor,(region,)).fetchone()
     clean = res[0].strip("()")
     return tuple(int(v.strip()) for v in clean.split(","))
@@ -91,17 +91,20 @@ def duplicate(carte: str):
     dup = base.copy()
     dup.save("copy.png")
     
-def affichage(region, famille, carte: str):
+def affichage(region, famille, carte: str, faction):
     # Open the base image
     result_img = Image.open(carte)
-    nom = famille +".png"
+    if faction == "arsenal":
+        nom = famille +".png"
+    elif faction == "soldat":
+        nom = famille +"_soldat.png"
     
     overlay_img = Image.open(nom)
     overlay_img = overlay_img.resize((100, 130))
 
         
     overlay_img = overlay_img.convert("RGBA")
-    position = coor(region)
+    position = coor(region, faction)
     
     result_img.paste(overlay_img, position, overlay_img)
     
@@ -112,7 +115,7 @@ def affichage(region, famille, carte: str):
         
         
 
-def creation_carte(carte: str):
+def creation_carte(carte: str, faction):
     list = cur.execute("SELECT nom, famille FROM position WHERE famille IS NOT NULL").fetchall()
     for x, y in list:
-       affichage(x, y, carte)
+       affichage(x, y, carte, faction)
